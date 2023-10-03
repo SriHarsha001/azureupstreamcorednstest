@@ -138,4 +138,4 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-replace github.com/coredns/coredns v0.0.0 => ../azureupstreamcorednstest
+replace github.com/coredns/coredns v0.0.0 => ../coredns
