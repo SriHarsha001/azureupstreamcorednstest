@@ -10,6 +10,8 @@ import (
 	"github.com/miekg/dns"
 )
 
+const namespace = "testns"
+
 var dnsTestCasesA = []test.Case{
 	{ // An A record query for an existing service should return a record
 		Qname: "svc-1-a.test-1.svc.cluster.local.", Qtype: dns.TypeA,
