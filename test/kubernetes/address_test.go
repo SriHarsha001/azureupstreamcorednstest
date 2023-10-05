@@ -81,6 +81,11 @@ var dnsTestCasesA = []test.Case{
 			test.A("kube-dns.kube-system.svc.cluster.local. 5 IN A 10.96.0.10"),
 		},
 	},
+	{ // An A record query external domain with response size greater than 512 bytes should be truncated.
+		Qname: "corednse2e.com",
+		Qtype: dns.TypeA,
+		Rcode: dns.RcodeSuccess,
+	},
 }
 
 var newObjectTests = []test.Case{
@@ -128,7 +133,7 @@ subsets:
 
 func TestKubernetesA(t *testing.T) {
 
-	rmFunc, upstream, udp := UpstreamServer(t, "example.net", ExampleNet)
+	rmFunc, upstream, _ := UpstreamServer(t, "example.net", ExampleNet)
 	defer upstream.Stop()
 	defer rmFunc()
 
@@ -140,7 +145,7 @@ func TestKubernetesA(t *testing.T) {
         kubernetes cluster.local 10.in-addr.arpa {
 			namespaces test-1
 		}
-		forward . ` + udp + `
+		forward . /etc/resolv.conf
     }
 `
 
@@ -156,11 +161,34 @@ func TestKubernetesA(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("%s %s", tc.Qname, dns.TypeToString[tc.Qtype]), func(t *testing.T) {
-			res, err := DoIntegrationTest(tc, namespace)
+
+			var res *dns.Msg
+			var err error
+
+			if tc.Qname == "corednse2e.com" {
+
+				// Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
+				res, err = DoIntegrationTestWithNoEdns(tc, namespace)
+				if err != nil {
+					t.Errorf(err.Error())
+				}
+
+				if res.Rcode != tc.Rcode {
+					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
+				}
+				if res.Truncated != true {
+					t.Errorf("tc bit is %v, expected %v", res.Truncated, true)
+				}
+				return
+			}
+
+			res, err = DoIntegrationTest(tc, namespace)
+
 			if err != nil {
 				t.Errorf(err.Error())
 			}
 			test.CNAMEOrder(res)
+
 			if err := test.SortAndCheck(res, tc); err != nil {
 				t.Error(err)
 			}
