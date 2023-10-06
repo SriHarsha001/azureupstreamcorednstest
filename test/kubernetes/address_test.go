@@ -168,7 +168,20 @@ func TestKubernetesA(t *testing.T) {
 			if tc.Qname == "corednse2e.com" {
 
 				// Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
-				res, err = DoIntegrationTestWithNoEdns(tc, namespace)
+				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "168.63.129.16")
+				if err != nil {
+					t.Errorf(err.Error())
+				}
+
+				if res.Rcode != tc.Rcode {
+					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
+				}
+				if res.Truncated != true {
+					t.Errorf("tc bit is %v, expected %v", res.Truncated, false)
+				}
+
+				// Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
+				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "10.0.0.10")
 				if err != nil {
 					t.Errorf(err.Error())
 				}

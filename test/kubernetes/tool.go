@@ -57,8 +57,8 @@ func DoIntegrationTest(tc test.Case, namespace string) (*dns.Msg, error) {
 }
 
 // DoIntegrationTest executes a test case
-func DoIntegrationTestWithNoEdns(tc test.Case, namespace string) (*dns.Msg, error) {
-	digCmd := "dig -t " + dns.TypeToString[tc.Qtype] + " " + tc.Qname + " +ignore +noedns +search +noshowsearch +time=10 +tries=6"
+func DoIntegrationTestWithNoEdns(tc test.Case, namespace string, DNSServer string) (*dns.Msg, error) {
+	digCmd := "dig -t " + dns.TypeToString[tc.Qtype] + " " + tc.Qname + " +ignore +noedns +search +noshowsearch +time=10 +tries=6 @" + DNSServer
 
 	// attach to client and execute query.
 	var cmdout string
