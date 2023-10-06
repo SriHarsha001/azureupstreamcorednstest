@@ -181,7 +181,7 @@ func TestKubernetesA(t *testing.T) {
 				}
 
 				// Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
-				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "10.0.0.10")
+				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "10.96.0.10")
 				if err != nil {
 					t.Errorf(err.Error())
 				}
