@@ -145,7 +145,7 @@ func TestKubernetesA(t *testing.T) {
         kubernetes cluster.local 10.in-addr.arpa {
 			namespaces test-1
 		}
-		forward . /etc/resolv.conf
+		forward . 168.63.129.16
     }
 `
 
@@ -176,7 +176,7 @@ func TestKubernetesA(t *testing.T) {
 				if res.Rcode != tc.Rcode {
 					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
 				}
-				if res.Truncated != true {
+				if res.Truncated != false {
 					t.Errorf("tc bit is %v, expected %v", res.Truncated, false)
 				}
 
