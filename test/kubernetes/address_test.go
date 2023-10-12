@@ -177,7 +177,19 @@ func TestKubernetesA(t *testing.T) {
 					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
 				}
 				if res.Truncated != false {
-					t.Errorf("tc bit is %v, expected %v", res.Truncated, false)
+					t.Errorf("Azure DNS test - tc bit is %v, expected %v", res.Truncated, false)
+				}
+
+				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "8.8.8.8")
+				if err != nil {
+					t.Errorf(err.Error())
+				}
+
+				if res.Rcode != tc.Rcode {
+					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
+				}
+				if res.Truncated != true {
+					t.Errorf("8.8.8.8 server test - tc bit is %v, expected %v", res.Truncated, true)
 				}
 
 				// Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
@@ -190,7 +202,7 @@ func TestKubernetesA(t *testing.T) {
 					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
 				}
 				if res.Truncated != true {
-					t.Errorf("tc bit is %v, expected %v", res.Truncated, true)
+					t.Errorf("CoreDNS test - tc bit is %v, expected %v", res.Truncated, true)
 				}
 				return
 			}
