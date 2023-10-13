@@ -82,12 +82,12 @@ var dnsTestCasesA = []test.Case{
 		},
 	},
 	{ // An A record query external domain with response size greater than 512 bytes should be truncated.
-		Qname: "corednse2e.com",
+		Qname: "corednse2e.com.",
 		Qtype: dns.TypeA,
 		Rcode: dns.RcodeSuccess,
 	},
 	{ // An A record query external domain with response size greater than 512 bytes should be truncated.
-		Qname: "cluster-us-east-1-152269.prevops.com",
+		Qname: "cluster-us-east-1-152269.prevops.com.",
 		Qtype: dns.TypeA,
 		Rcode: dns.RcodeSuccess,
 	},
@@ -170,9 +170,9 @@ func TestKubernetesA(t *testing.T) {
 			var res *dns.Msg
 			var err error
 
-			if tc.Qname == "corednse2e.com" {
+			if tc.Qname == "corednse2e.com." {
 
-				// Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
+				// // Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
 				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "168.63.129.16")
 				if err != nil {
 					t.Errorf(err.Error())
@@ -212,9 +212,9 @@ func TestKubernetesA(t *testing.T) {
 				return
 			}
 
-			if tc.Qname == "cluster-us-east-1-152269.prevops.com" {
+			if tc.Qname == "cluster-us-east-1-152269.prevops.com." {
 
-				// Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
+				// // Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
 				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "168.63.129.16")
 				if err != nil {
 					t.Errorf(err.Error())
