@@ -82,12 +82,7 @@ var dnsTestCasesA = []test.Case{
 		},
 	},
 	{ // An A record query external domain with response size greater than 512 bytes should be truncated.
-		Qname: "corednse2e.com.",
-		Qtype: dns.TypeA,
-		Rcode: dns.RcodeSuccess,
-	},
-	{ // An A record query external domain with response size greater than 512 bytes should be truncated.
-		Qname: "cluster-us-east-1-152269.prevops.com.",
+		Qname: "corednse2etestaks.com.",
 		Qtype: dns.TypeA,
 		Rcode: dns.RcodeSuccess,
 	},
@@ -170,31 +165,29 @@ func TestKubernetesA(t *testing.T) {
 			var res *dns.Msg
 			var err error
 
-			if tc.Qname == "corednse2e.com." {
+			if tc.Qname == "corednse2etestaks.com." {
 
 				// // Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
 				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "168.63.129.16")
 				if err != nil {
 					t.Errorf(err.Error())
 				}
-
 				if res.Rcode != tc.Rcode {
 					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
 				}
 				if res.Truncated != false {
-					t.Errorf("Azure DNS test : corednse2e.com - tc bit is %v, expected %v", res.Truncated, false)
+					t.Errorf("Azure DNS test : "+tc.Qname+" - tc bit is %v, expected %v", res.Truncated, false)
 				}
 
 				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "8.8.8.8")
 				if err != nil {
 					t.Errorf(err.Error())
 				}
-
 				if res.Rcode != tc.Rcode {
 					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
 				}
 				if res.Truncated != true {
-					t.Errorf("8.8.8.8 server test : corednse2e.com - tc bit is %v, expected %v", res.Truncated, true)
+					t.Errorf("8.8.8.8 server test : "+tc.Qname+" - tc bit is %v, expected %v", res.Truncated, true)
 				}
 
 				// Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
@@ -202,54 +195,11 @@ func TestKubernetesA(t *testing.T) {
 				if err != nil {
 					t.Errorf(err.Error())
 				}
-
 				if res.Rcode != tc.Rcode {
 					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
 				}
 				if res.Truncated != true {
-					t.Errorf("CoreDNS test : corednse2e.com -tc bit is %v, expected %v", res.Truncated, true)
-				}
-				return
-			}
-
-			if tc.Qname == "cluster-us-east-1-152269.prevops.com." {
-
-				// // Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
-				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "168.63.129.16")
-				if err != nil {
-					t.Errorf(err.Error())
-				}
-
-				if res.Rcode != tc.Rcode {
-					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
-				}
-				if res.Truncated != false {
-					t.Errorf("Azure DNS test : cluster-us-east-1-152269.prevops.com - tc bit is %v, expected %v", res.Truncated, false)
-				}
-
-				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "8.8.8.8")
-				if err != nil {
-					t.Errorf(err.Error())
-				}
-
-				if res.Rcode != tc.Rcode {
-					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
-				}
-				if res.Truncated != true {
-					t.Errorf("8.8.8.8 server test : cluster-us-east-1-152269.prevops.com - tc bit is %v, expected %v", res.Truncated, true)
-				}
-
-				// Calling this function defined in test/kubernetes/tool.go which uses Noedns flag in the dig command.
-				res, err = DoIntegrationTestWithNoEdns(tc, namespace, "10.96.0.10")
-				if err != nil {
-					t.Errorf(err.Error())
-				}
-
-				if res.Rcode != tc.Rcode {
-					t.Errorf("rcode is %q, expected %q", dns.RcodeToString[res.Rcode], dns.RcodeToString[tc.Rcode])
-				}
-				if res.Truncated != true {
-					t.Errorf("CoreDNS test : cluster-us-east-1-152269.prevops.com -tc bit is %v, expected %v", res.Truncated, true)
+					t.Errorf("CoreDNS test : "+tc.Qname+" -tc bit is %v, expected %v", res.Truncated, true)
 				}
 				return
 			}
